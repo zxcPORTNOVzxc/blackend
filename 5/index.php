@@ -94,11 +94,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   // ранее в сессию записан факт успешного логина.
   if (empty($errors) && !empty($_COOKIE[session_name()]) && session_start() && !empty($_SESSION['login'])) {
     try {
-      $user = 'u47666';
-      $pass = '4464315';
+      $user = 'u47523';
+      $pass = '2958871';
       $member = $_SESSION['login'];
-      $db = new PDO('mysql:host=localhost;dbname=u47666', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
-      $stmt = $db->prepare("abilities * FROM users5 WHERE login = ?");
+      $db = new PDO('mysql:host=localhost;dbname=u47523', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+      $stmt = $db->prepare("select * FROM new_users WHERE login = ?");
       $stmt->execute(array($member));
       $result = $stmt->fetch(PDO::FETCH_ASSOC);
       $values['name'] = $result['name'];
@@ -109,10 +109,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       $values['bio'] = $result['bio'];
       $values['policy'] = $result['policy'];
 
-      $powers = $db->prepare("abilities * FROM superpowers5 WHERE user_login = ?");
+      $powers = $db->prepare("select * FROM new_powers WHERE user_login = ?");
       $powers->execute(array($member));
       $result = $powers->fetch(PDO::FETCH_ASSOC);
-      $values['abilities'] = $result['powers'];
+      $values['abilities'] = $result['abilities'];
     } catch (PDOException $e) {
       print('Error : ' . $e->getMessage());
       exit();
@@ -205,8 +205,8 @@ else {
     setcookie('policy_error', '', 100000);
   }
 
-  $user = 'u47666';
-  $pass = '4464315';
+  $user = 'u47523';
+  $pass = '2958871';
   $name = $_POST['name'];
   $email = $_POST['email'];
   $date = $_POST['date'];
@@ -217,14 +217,14 @@ else {
   $powers = implode(',', $_POST['abilities']);
   $member = $_SESSION['login'];
 
-  $db = new PDO('mysql:host=localhost;dbname=u47666', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+  $db = new PDO('mysql:host=localhost;dbname=u47523', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
   // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
   if (!empty($_COOKIE[session_name()]) && session_start() && !empty($_SESSION['login'])) {
     try {
-      $stmt = $db->prepare("UPDATE users5 SET name = ?, email = ?, date = ?, gender = ?, limbs = ?, bio = ?, policy = ? WHERE login = ?");
+      $stmt = $db->prepare("UPDATE new_users SET name = ?, email = ?, date = ?, gender = ?, limbs = ?, bio = ?, policy = ? WHERE login = ?");
       $stmt->execute(array($name, $email, $date, $gender, $limbs, $bio, $policy, $member));
 
-      $superpowers = $db->prepare("UPDATE superpowers5 SET powers = ? WHERE user_login = ? ");
+      $superpowers = $db->prepare("UPDATE new_powers SET abilities = ? WHERE user_login = ? ");
       $superpowers->execute(array($powers, $member));
     } catch (PDOException $e) {
       print('Error : ' . $e->getMessage());
@@ -239,10 +239,10 @@ else {
     setcookie('pass', $password);
 
     try {
-      $stmt = $db->prepare("INSERT INTO users5 SET login = ?, pass = ?, name = ?, email = ?, date = ?, gender = ?, limbs = ?, bio = ?, policy = ?");
+      $stmt = $db->prepare("INSERT INTO new_users SET login = ?, pass = ?, name = ?, email = ?, date = ?, gender = ?, limbs = ?, bio = ?, policy = ?");
       $stmt->execute(array($login, $hash, $name, $email, $date, $gender, $limbs, $bio, $policy));
 
-      $superpowers = $db->prepare("INSERT INTO superpowers5 SET powers = ?, user_login = ? ");
+      $superpowers = $db->prepare("INSERT INTO new_powers SET abilities = ?, user_login = ? ");
       $superpowers->execute(array($powers, $login));
     } catch (PDOException $e) {
       print('Error : ' . $e->getMessage());
