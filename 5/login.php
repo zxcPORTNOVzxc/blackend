@@ -23,27 +23,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   }
 ?>
 
-  <form action="" method="POST">
-    <span>Логин:</span>
-    <input name="login" />
-    <span>Пароль:</span>
-    <input name="pass" />
-    <input type="submit" value="Войти" />
-  </form>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+    <title>Login</title>
+</head>
+<body>
+        <form action="" method="POST" class="login-block">
+            <div>
+                <span>Логин:</span>
+                <input name="login" />
+            </div>
+            <div>
+                <span>Пароль:</span>
+                <input name="pass" />
+            </div>
+            <input type="submit" value="Войти" />
+          </form>
+    </div>
+</body>
+</html>
 
 <?php
 }
 // Иначе, если запрос был методом POST, т.е. нужно сделать авторизацию с записью логина в сессию.
 else {
-  $user = 'u47572';
-  $pass = '4532025';
-  $db = new PDO('mysql:host=localhost;dbname=u47572', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+  $user = 'u47523';
+  $pass = '2958871';
+  $db = new PDO('mysql:host=localhost;dbname=u47523', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
 
   $member = $_POST['login'];
   $member_pass_hash = md5($_POST['pass']);
 
   try {
-    $stmt = $db->prepare("SELECT * FROM members WHERE login = ?");
+    $stmt = $db->prepare("SELECT * FROM new_users WHERE login = ?");
     $stmt->execute(array($member));
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
   } catch (PDOException $e) {
