@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $values['bio'] = $result['bio'];
             $values['policy'] = $result['policy'];
 
-            $powers = $db->prepare("SELECT distinct name from superclients join powers2 pow on power_id = pow.id where owner_id = ?");
+            $powers = $db->prepare("SELECT distinct name from superclients join powers2 pow on power_id = pow.id where user_id = ?");
             $powers->execute(array($member));
             $result = $powers->fetchAll(PDO::FETCH_ASSOC);
             $values['abilities'] = implode(',', $result);
@@ -247,9 +247,15 @@ else {
         try {
             $stmt = $db->prepare("INSERT INTO new_users SET login = ?, pass = ?, name = ?, email = ?, date = ?, gender = ?, limbs = ?, bio = ?, policy = ?");
             $stmt->execute(array($login, $hash, $name, $email, $date, $gender, $limbs, $bio, $policy));
+            $user_id = $db->lastInsertId();
+            foreach ($powers as $value) {
+                $stmt = $db->prepare("SELECT id from powers2 WHERE name = ?");
+                $stmt->execute(array($value));
+                $power_id = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $superpowers = $db->prepare("INSERT INTO powers2 SET abilities = ?, user_login = ? ");
-            $superpowers->execute(array($powers, $login));
+                $superpowers = $db->prepare("INSERT INTO superclients SET power_id = ?, user_id = ? ");
+                $superpowers->execute(array($power_id['id'], $user_id));
+            }
         } catch (PDOException $e) {
             print('Error : ' . $e->getMessage());
             exit();
