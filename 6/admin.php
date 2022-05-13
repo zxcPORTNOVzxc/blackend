@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $powers = $db->prepare("SELECT distinct name from superclients join powers2 pow on power_id = pow.id where user_id = ?");
         $powers->execute(array($member_id));
         $result = $powers->fetchAll(PDO::FETCH_ASSOC);
-        $values['select'] = implode(',', $result);
+        $values['abilities'] = implode(',', $result);
     } else {
         $name = $_POST['name'];
         $email = $_POST['email'];
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $limbs = $_POST['limbs'];
         $bio = $_POST['bio'];
         $policy = $_POST['policy'];
-        $select = $_POST['select'];
+        $select = $_POST['abilities'];
         $user = 'u47523';
         $pass = '2958871';
         $db = new PDO('mysql:host=localhost;dbname=u47523', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
