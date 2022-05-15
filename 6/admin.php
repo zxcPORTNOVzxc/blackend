@@ -42,7 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $powers = $db->prepare("SELECT distinct name from superclients join powers2 pow on power_id = pow.id where user_id = ?");
         $powers->execute(array($member_id));
         $result = $powers->fetchAll(PDO::FETCH_ASSOC);
-        $values['abilities'] = implode(',', $result);
+        $str = "";
+        foreach ($result as $power) {
+            $str .= $power['name'] . ',';
+        }
+        $values['abilities'] = $str;
     } else {
         $name = $_POST['name'];
         $email = $_POST['email'];
